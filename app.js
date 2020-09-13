@@ -5,16 +5,8 @@ const bodyParser = require("body-parser");
 //Variables
 const app = express();
 const port = 3000;
-<<<<<<< HEAD
-<<<<<<< HEAD
 let items = ["Buy food", "Cook food", "Eat food"];
-=======
-var items = ["Buy food", "Cook food", "Eat food"];
->>>>>>> 4892858... Change HTML list items to part of the items array
-=======
-var items = ["Buy food", "Cook food", "Eat food"];
->>>>>>> 4892858... Change HTML list items to part of the items array
-		  
+
 //Body-Parser
 app.use(bodyParser.urlencoded({extended: true}));
 
