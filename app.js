@@ -5,29 +5,38 @@ const bodyParser = require("body-parser");
 //Variables
 const app = express();
 const port = 3000;
+<<<<<<< HEAD
+<<<<<<< HEAD
+let items = ["Buy food", "Cook food", "Eat food"];
+=======
 var items = ["Buy food", "Cook food", "Eat food"];
+>>>>>>> 4892858... Change HTML list items to part of the items array
+=======
+var items = ["Buy food", "Cook food", "Eat food"];
+>>>>>>> 4892858... Change HTML list items to part of the items array
 		  
 //Body-Parser
 app.use(bodyParser.urlencoded({extended: true}));
 
 //Express
+app.use(express.static("public"));
 app.set("view engine", "ejs");
 
 //GET
 app.get("/", function(req, res){
-	var today = new Date();
-	var options = {
+	let today = new Date();
+	let options = {
 		weekday: "long",
 		day: "numeric",
 		month: "long",
 	};
-	var day = today.toLocaleDateString("en-US", options);
+	let day = today.toLocaleDateString("en-US", options);
 	res.render("list", {kindOfDay: day, newListItems: items});
 });
 
 //POST
 app.post("/", function(req, res){
-	var newItem = req.body.newitem;
+	let newItem = req.body.newitem;
 	items.push(newItem)
 	res.redirect("/");
 })
