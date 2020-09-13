@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 //Variables
 const app = express();
 const port = 3000;
-var items = [];
+var items = ["Buy food", "Cook food", "Eat food"];
 		  
 //Body-Parser
 app.use(bodyParser.urlencoded({extended: true}));
