@@ -7,7 +7,7 @@
 	</head>
 	<body>
 		<div class="box" id="heading">
-			<h1><%= kindOfDay %></h1>
+			<h1><%= listTitle %></h1>
 		</div>
 
 		<div class="box">
@@ -21,9 +21,11 @@
 				</div>
 			<% } %>
 
-		<form method="POST" action="/" class="item">
+			<!-- <form method="POST" action="<%= route %>" class="item"> -->
+			<!-- this was my way of solving the problem of getting redirected to the root route -->
+			<form method="POST" action="/" class="item">
 			<input type="text" name="newitem" placeholder="New Item" autocomplete="off"/>
-			<button type="submit">+</button>
+			<button type="submit" name="list" value="<%= listTitle %>">+</button>
 		</form>
 		</div>
 	</body>

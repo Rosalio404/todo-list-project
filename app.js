@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
 let items = ["Buy food", "Cook food", "Eat food"];
+let workItems = [];
 
 //Body-Parser
 app.use(bodyParser.urlencoded({extended: true}));
@@ -22,16 +23,29 @@ app.get("/", function(req, res){
 		day: "numeric",
 		month: "long",
 	};
+	let route = "/";
 	let day = today.toLocaleDateString("en-US", options);
-	res.render("list", {kindOfDay: day, newListItems: items});
+	res.render("list", {listTitle: day, newListItems: items, route: route});
+});
+
+app.get("/work", function(req, res){
+	let route = "/work";
+	res.render("list", {listTitle: "Work", newListItems: workItems, route: route});
 });
 
 //POST
 app.post("/", function(req, res){
 	let newItem = req.body.newitem;
-	items.push(newItem)
+
+	if (req.body.list === "Work") {
+	workItems.push(newItem);
+	res.redirect("/work");
+	} else {
+	items.push(newItem);
 	res.redirect("/");
-})
+	}
+});
+
 //Listen
 app.listen(port, function(){
 		console.log("Server started on port " + port);
