@@ -1,32 +1,23 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8"/>
-		<title>To do List</title>
-		<link href="css/styles.css" rel="stylesheet"/>
-	</head>
-	<body>
-		<div class="box" id="heading">
-			<h1><%= listTitle %></h1>
-		</div>
+<%- include("header") %>
+<div class="box" id="heading">
+	<h1><%= listTitle %></h1>
+</div>
 
-		<div class="box">
-		<ul>
-			<% for (var i=0; i < newListItems.length; i++){ %>
-				<div class="item">
-					<input type="checkbox"/>
-					<p>
-						<%= newListItems[i] %>
-					</p>
-				</div>
-			<% } %>
-
-			<!-- <form method="POST" action="<%= route %>" class="item"> -->
-			<!-- this was my way of solving the problem of getting redirected to the root route -->
-			<form method="POST" action="/" class="item">
-			<input type="text" name="newitem" placeholder="New Item" autocomplete="off"/>
-			<button type="submit" name="list" value="<%= listTitle %>">+</button>
-		</form>
+<div class="box">
+	<% for (var i=0; i < newListItems.length; i++){ %>
+		<div class="item">
+			<input type="checkbox"/>
+			<p>
+				<%= newListItems[i] %>
+			</p>
 		</div>
-	</body>
-</html>
+	<% } %>
+
+	<!-- <form method="POST" action="<%= route %>" class="item"> -->
+	<!-- this was my way of solving the problem of getting redirected to the root route -->
+	<form method="POST" action="/" class="item">
+		<input type="text" name="newitem" placeholder="New Item" autocomplete="off"/>
+		<button type="submit" name="list" value="<%= listTitle %>">+</button>
+	</form>
+</div>
+<%- include("footer") %>
