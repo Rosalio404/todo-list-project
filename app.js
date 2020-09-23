@@ -12,20 +12,53 @@ app.use(express.static("public"));
 
 mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser: true});
 
+
+// Define item schema and constructor model
 const itemSchema = {
 	itemContent: String,
-	position: Number,
 	checkedState: Boolean,
 };
-
 const Item = mongoose.model("Item", itemSchema);
-// const items = ["Buy Food", "Cook Food", "Eat Food"];
-// const workItems = [];
+
+
+// Add item variables, create array, insert array
+//
+// const mongoItem = new Item({
+// 	itemContent: "Learn MongoDB",
+// 	checkedState: false
+// });
+// const reactItem = new Item({
+// 	itemContent: "Learn React",
+// 	checkedState: false
+// });
+// const jsItem = new Item({
+// 	itemContent: "Learn JavaScript",
+// 	checkedState: false
+// });
+
+// const defaultItems = [mongoItem, reactItem, jsItem];
+
+// Item.insertMany(defaultItems, function (err) {
+// 	if (err){
+// 		console.log(err)
+// 	} else {
+// 		console.log("Successfully inserted items!")
+// 	}
+// });
+
 
 //Express
 app.get("/", function(req, res) {
 
-	res.render("list", {listTitle: day, newListItems: items});
+	// Create array of all items in DB and send to list
+	Item.find({}, function (err, foundItems){
+		if (err) {
+			console.log(err);
+		} else {
+			res.render("list", {listTitle: "Today", newListItems: foundItems});
+		}
+	});
+
 
 });
 
