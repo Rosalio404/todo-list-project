@@ -61,16 +61,21 @@ app.get("/", function(req, res) {
 
 // POST
 app.post("/", function(req, res){
+	const itemContent = req.body.newItem;
+	const newUserItem = new Item({
+		itemContent: itemContent,
+		checkedState: false
+	});
 
-	const item = req.body.newItem;
+	Item.create(newUserItem, function (err) {
+		if (err) {
+			console.log(err);
+		} else {
+			console.log("Successfully inserted items!");
+		}
+	});
 
-	if (req.body.list === "Work") {
-		workItems.push(item);
-		res.redirect("/work");
-	} else {
-		items.push(item);
-		res.redirect("/");
-	}
+	res.redirect("/");
 });
 
 app.get("/work", function(req,res){
