@@ -1,8 +1,7 @@
-//jshint esversion:6
-
+//Modules
 const express = require("express");
 const bodyParser = require("body-parser");
-const date = require(__dirname + "/date.js");
+const mongoose = require("mongoose");
 
 const app = express();
 
@@ -11,12 +10,20 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-const items = ["Buy Food", "Cook Food", "Eat Food"];
-const workItems = [];
+mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser: true});
 
+const itemSchema = {
+	itemContent: String,
+	position: Number,
+	checkedState: Boolean,
+};
+
+const Item = mongoose.model("Item", itemSchema);
+// const items = ["Buy Food", "Cook Food", "Eat Food"];
+// const workItems = [];
+
+//Express
 app.get("/", function(req, res) {
-
-const day = date.getDate();
 
 	res.render("list", {listTitle: day, newListItems: items});
 
