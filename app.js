@@ -23,45 +23,43 @@ const Item = mongoose.model("Item", itemSchema);
 
 // Add item variables, create array, insert array
 //
-// const mongoItem = new Item({
-// 	itemContent: "Learn MongoDB",
-// 	checkedState: false
-// });
-// const reactItem = new Item({
-// 	itemContent: "Learn React",
-// 	checkedState: false
-// });
-// const jsItem = new Item({
-// 	itemContent: "Learn JavaScript",
-// 	checkedState: false
-// });
+const welcomeItem = new Item({
+	itemContent: "Welcome to your To Do List!",
+	checkedState: false
+});
+const addItem = new Item({
+	itemContent: "Hit the + to add new items",
+	checkedState: false
+});
+const deleteItem = new Item({
+	itemContent: "<== Hit this to delete an item",
+	checkedState: false
+});
+const defaultItems = [welcomeItem, addItem, deleteItem];
 
-// const defaultItems = [mongoItem, reactItem, jsItem];
-
-// Item.insertMany(defaultItems, function (err) {
-// 	if (err){
-// 		console.log(err)
-// 	} else {
-// 		console.log("Successfully inserted items!")
-// 	}
-// });
 
 
 //Express
+// GET
 app.get("/", function(req, res) {
 
-	// Create array of all items in DB and send to list
-	Item.find({}, function (err, foundItems){
-		if (err) {
-			console.log(err);
+	Item.find({}, function (err, foundItems) {
+		if (foundItems.length === 0){
+			Item.insertMany(defaultItems, function (err) {
+				if (err) {
+					console.log(err)
+				} else {
+					console.log("Successfully inserted items!")
+				}
+			});
+			res.redirect("/");
 		} else {
 			res.render("list", {listTitle: "Today", newListItems: foundItems});
 		}
 	});
-
-
 });
 
+// POST
 app.post("/", function(req, res){
 
 	const item = req.body.newItem;
