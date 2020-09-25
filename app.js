@@ -16,7 +16,6 @@ mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser: true}
 // Define item schema and constructor model
 const itemSchema = {
 	itemContent: String,
-	checkedState: Boolean,
 };
 const Item = mongoose.model("Item", itemSchema);
 
@@ -25,15 +24,12 @@ const Item = mongoose.model("Item", itemSchema);
 //
 const welcomeItem = new Item({
 	itemContent: "Welcome to your To Do List!",
-	checkedState: false
 });
 const addItem = new Item({
 	itemContent: "Hit the + to add new items",
-	checkedState: false
 });
 const deleteItem = new Item({
 	itemContent: "<== Hit this to delete an item",
-	checkedState: false
 });
 const defaultItems = [welcomeItem, addItem, deleteItem];
 
@@ -59,33 +55,34 @@ app.get("/", function(req, res) {
 	});
 });
 
+app.get("/about", function(req, res){
+	res.render("about");
+});
+
 // POST
 app.post("/", function(req, res){
 	const itemContent = req.body.newItem;
 	const newUserItem = new Item({
 		itemContent: itemContent,
-		checkedState: false
 	});
-
-	Item.create(newUserItem, function (err) {
-		if (err) {
-			console.log(err);
-		} else {
-			console.log("Successfully inserted items!");
-		}
-	});
+	newUserItem.save();
 
 	res.redirect("/");
 });
 
-app.get("/work", function(req,res){
-	res.render("list", {listTitle: "Work List", newListItems: workItems});
+app.post("/delete", function (req, res) {
+	const checkedItem = req.body.checkbox;
+	Item.findByIdAndRemove(checkedItem, function (err) {
+		if (err) {
+			console.log(err);
+		} else {
+			console.log("Sucessfully removed item!");
+			res.redirect("/");
+		}
+	});
 });
 
-app.get("/about", function(req, res){
-	res.render("about");
-});
-
+// Listen
 app.listen(3000, function() {
 	console.log("Server started on port 3000");
 });
