@@ -34,6 +34,12 @@ const deleteItem = new Item({
 const defaultItems = [welcomeItem, addItem, deleteItem];
 
 
+// Define list schema and model
+const listSchema= {
+	title: String,
+	items: [itemSchema],
+};
+const List = mongoose.model("List", listSchema);
 
 //Express
 // GET
@@ -55,6 +61,27 @@ app.get("/", function(req, res) {
 	});
 });
 
+app.get("/:listName", function (req, res) {
+	const listName = req.params.listName;
+
+	List.findOne({title: listName}, function (err, foundList) {
+		if(!err){
+			if (!foundList) {
+				const newList = new List({
+					title: listName,
+					items: defaultItems
+				});
+				newList.save();
+				res.redirect("/" + listName);
+			} else {
+				res.render("list", {listTitle: foundList.title, newListItems: foundList.items});
+			}
+		} else {
+			console.log(err);
+		}
+	});
+});
+
 app.get("/about", function(req, res){
 	res.render("about");
 });
@@ -62,24 +89,44 @@ app.get("/about", function(req, res){
 // POST
 app.post("/", function(req, res){
 	const itemContent = req.body.newItem;
+	const listName = req.body.list;
 	const newUserItem = new Item({
 		itemContent: itemContent,
 	});
+	if (listName === "Today") {
 	newUserItem.save();
-
 	res.redirect("/");
+	} else {
+		List.findOne({title: listName}, function (err, foundList) {
+			foundList.items.push(newUserItem);
+			foundList.save();
+			res.redirect("/" + listName);
+		});
+	}
 });
 
 app.post("/delete", function (req, res) {
 	const checkedItem = req.body.checkbox;
-	Item.findByIdAndRemove(checkedItem, function (err) {
-		if (err) {
-			console.log(err);
-		} else {
-			console.log("Sucessfully removed item!");
-			res.redirect("/");
-		}
-	});
+	const listName = req.body.listTitle;
+	console.log(req.body);
+	if(listName === "Today") {
+		Item.findByIdAndRemove(checkedItem, function (err) {
+			if (err) {
+				console.log(err);
+			} else {
+				console.log("Successfully removed item!");
+				res.redirect("/" + listName);
+			}
+		});
+	} else {
+		List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItem}}}, function (err, foundList) {
+			if (err) {
+				console.log(err);
+			} else {
+				res.redirect("/" + listName);
+			}
+		});
+	}
 });
 
 // Listen
