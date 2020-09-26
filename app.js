@@ -17,27 +17,27 @@ mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser: true}
 // Schemas
 // Define item schema and constructor model
 const itemSchema = {
-	itemContent: String,
+	name: String,
 };
 const Item = mongoose.model("Item", itemSchema);
 
 
 // Add item variables, create array, insert array
-const welcomeItem = new Item({
-	itemContent: "Welcome to your To Do List!",
+const item1 = new Item({
+	name: "Welcome to your To Do List!",
 });
-const addItem = new Item({
-	itemContent: "Hit the + to add new items",
+const item2 = new Item({
+	name: "Hit the + to add new items",
 });
-const deleteItem = new Item({
-	itemContent: "<== Hit this to delete an item",
+const item3 = new Item({
+	name: "<== Hit this to delete an item",
 });
-const defaultItems = [welcomeItem, addItem, deleteItem];
+const defaultItems = [item1, item2, item3];
 
 
 // Define list schema and model
 const listSchema= {
-	title: String,
+	name: String,
 	items: [itemSchema],
 };
 const List = mongoose.model("List", listSchema);
@@ -47,7 +47,7 @@ const List = mongoose.model("List", listSchema);
 app.get("/", function(req, res) {
 
 	Item.find({}, function (err, foundItems) {
-		if (foundItems.length === 0){
+		if (foundItems.length === 0) {
 			Item.insertMany(defaultItems, function (err) {
 				if (err) {
 					console.log(err)
@@ -62,20 +62,22 @@ app.get("/", function(req, res) {
 	});
 });
 
-app.get("/:listName", function (req, res) {
-	const listName = req.params.listName;
+app.get("/:customListName", function (req, res) {
+	const customListName = req.params.customListName;
 
-	List.findOne({title: listName}, function (err, foundList) {
+	List.findOne({name: customListName}, function (err, foundList) {
 		if(!err){
 			if (!foundList) {
-				const newList = new List({
-					title: listName,
+				// Create a new list
+				const list = new List({
+					name: customListName,
 					items: defaultItems
 				});
-				newList.save();
-				res.redirect("/" + listName);
+				list.save();
+				res.redirect("/" + customListName);
 			} else {
-				res.render("list", {listTitle: foundList.title, newListItems: foundList.items});
+				// Show existing list
+				res.render("list", {listTitle: foundList.name, newListItems: foundList.items});
 			}
 		} else {
 			console.log(err);
@@ -89,17 +91,20 @@ app.get("/about", function(req, res){
 
 // POST
 app.post("/", function(req, res){
-	const itemContent = req.body.newItem;
+
+	const itemName = req.body.newItem;
 	const listName = req.body.list;
-	const newUserItem = new Item({
-		itemContent: itemContent,
+
+	const item = new Item({
+		name: itemName,
 	});
+
 	if (listName === "Today") {
-	newUserItem.save();
+	item.save();
 	res.redirect("/");
 	} else {
-		List.findOne({title: listName}, function (err, foundList) {
-			foundList.items.push(newUserItem);
+		List.findOne({name: listName}, function (err, foundList) {
+			foundList.items.push(item);
 			foundList.save();
 			res.redirect("/" + listName);
 		});
@@ -107,24 +112,24 @@ app.post("/", function(req, res){
 });
 
 app.post("/delete", function (req, res) {
-	const checkedItem = req.body.checkbox;
-	const listName = req.body.listTitle;
-	console.log(req.body);
+	const checkedItemId = req.body.checkbox;
+	const listName = req.body.listName;
+
 	if(listName === "Today") {
-		Item.findByIdAndRemove(checkedItem, function (err) {
-			if (err) {
-				console.log(err);
-			} else {
+		Item.findByIdAndRemove(checkedItemId, function (err) {
+			if (!err) {
 				console.log("Successfully removed item!");
-				res.redirect("/" + listName);
+				res.redirect("/");
+			} else {
+				console.log(err);
 			}
 		});
 	} else {
-		List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItem}}}, function (err, foundList) {
-			if (err) {
-				console.log(err);
-			} else {
+		List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, function (err, foundList) {
+			if (!err) {
 				res.redirect("/" + listName);
+			} else {
+				console.log(err);
 			}
 		});
 	}
