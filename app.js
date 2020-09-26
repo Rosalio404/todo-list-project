@@ -9,10 +9,12 @@ app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
+mongoose.set('useFindAndModify', false);
 
 mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser: true});
 
 
+// Schemas
 // Define item schema and constructor model
 const itemSchema = {
 	itemContent: String,
@@ -21,7 +23,6 @@ const Item = mongoose.model("Item", itemSchema);
 
 
 // Add item variables, create array, insert array
-//
 const welcomeItem = new Item({
 	itemContent: "Welcome to your To Do List!",
 });
