@@ -60,6 +60,8 @@ app.get("/", function(req, res) {
 				}
 			});
 			res.redirect("/");
+		} else if (err) {
+			console.log(err);
 		} else {
 			res.render("list", {listTitle: "Today", newListItems: foundItems});
 		}
@@ -108,9 +110,13 @@ app.post("/", function(req, res){
 	res.redirect("/");
 	} else {
 		List.findOne({name: listName}, function (err, foundList) {
-			foundList.items.push(item);
-			foundList.save();
-			res.redirect("/" + listName);
+			if (!err) {
+				foundList.items.push(item);
+				foundList.save();
+				res.redirect("/" + listName);
+			} else {
+				console.log(err);
+			}
 		});
 	}
 });
