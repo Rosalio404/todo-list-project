@@ -61,7 +61,7 @@ app.get("/", function(req, res) {
 			});
 			res.redirect("/");
 		} else if (err) {
-			console.log(err);
+			res.send(err);
 		} else {
 			res.render("list", {listTitle: "Today", newListItems: foundItems});
 		}
