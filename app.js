@@ -12,7 +12,15 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 mongoose.set('useFindAndModify', false);
 
-mongoose.connect("mongodb+srv://admin-rosalio:test123@cluster0.eeqfu.gcp.mongodb.net/todolistDB?retryWrites=true&w=majority", {useNewUrlParser: true});
+mongoose.connect(
+	"mongodb+srv://admin-rosalio:test123@cluster0.eeqfu.gcp.mongodb.net/todolistDB?retryWrites=true&w=majority", {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	});
+catch (err) {
+	console.error(err);
+	process.exit(1);
+}
 
 // Schemas
 // Define item schema and constructor model
